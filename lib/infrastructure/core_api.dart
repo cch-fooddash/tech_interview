@@ -4,10 +4,7 @@ import 'dart:io';
 
 import 'package:client_information/client_information.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fooddash_interview/infrastructure/authenticated_http_client.dart';
-import 'package:fooddash_interview/infrastructure/error_response_dtos.dart';
-import 'package:fooddash_interview/infrastructure/error_type.dart';
 import 'package:fooddash_interview/infrastructure/platform_agent_dtos.dart';
 import 'package:http/http.dart';
 
@@ -92,30 +89,6 @@ class CoreApi {
             pathParams: pathParams,
             queryParams: queryParams)
         .then((response) async {
-      if (response.statusCode == 200) {
-        return response;
-      }
-
-      final infoJson =
-          json.decode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>;
-      final errorResponse = AppErrorDto.fromJson(infoJson).toDomain();
-
-      if (errorResponse.errorType != ErrorType.accessTokenExpired &&
-          errorResponse.errorType != ErrorType.refreshTokenInvalid &&
-          !errorResponse.detail.contains("access")) {
-        //FIXME : 리얼용은 toast말고 타 동작들도 수행해야함
-        Fluttertoast.showToast(
-            msg: errorResponse.detail,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: const Color(0xff333333),
-            textColor: Colors.white,
-            webPosition: "bottom",
-            webBgColor: "#333333",
-            fontSize: 14.0);
-      }
-
       return response;
     });
   }
